@@ -1,0 +1,22 @@
+{
+  "name": "pushdropjson",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dfoderick/pushdropjson.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dfoderick/pushdropjson/issues"
+  },
+  "homepage": "https://github.com/dfoderick/pushdropjson#readme",
+  "dependencies": {
+    "bitcoinsource": "0.0.1-dev"
+  }
+}
