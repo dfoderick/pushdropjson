@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/dfoderick/pushdropjson#readme",
   "dependencies": {
-    "bitcoinsource": "0.0.1-dev"
+    "bsv": "^0.23.0"
   }
 }

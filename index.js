@@ -1,29 +1,15 @@
-const bs = require('bitcoinsource')
+const nestedpushdata = require('./nestedpushdata')
 
-function push(s, k, v) {
+const simpleJson = {a:"b"}
+console.log(simpleJson)
+const simpleScript = nestedpushdata.scriptify(simpleJson)
+console.log(simpleScript)
+const retrievedSimple = nestedpushdata.unscriptify(simpleScript)
+console.log(retrievedSimple)
 
-    if( v !== null && typeof v == "object" ) {
-        s.add(new Buffer(k)).add("OP_DROP")
-        Object.entries(v).forEach(([key, value]) => {
-            push(s, key, value)
-        })
-    }
-    else {
-        s.add(new Buffer(k)).add("OP_DROP").add(new Buffer(v)).add("OP_DROP")  
-    }
-}
-
-//const d = {a:{b:{c:"d",e:"f"}}}
-
-const d = {a:{b:"c"}}
-
-const s = new bs.Script()
-s.add("OP_RETURN")
-
-Object.keys(d).forEach(key => 
-    {
-        push(s, key, d[key])
-    })
-
-console.log(s)
-//console.log(s.getData())
+const complexJson = {a:{b:{c:"d",e:"f"}}}
+console.log(complexJson)
+const complexScript = nestedpushdata.scriptify(complexJson)
+console.log(complexScript)
+const retrievedComplex = nestedpushdata.unscriptify(complexScript)
+console.log(retrievedComplex)
