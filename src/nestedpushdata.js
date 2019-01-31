@@ -1,4 +1,5 @@
 const bsv = require('bsv')
+const Stack = require('./stack')
 
 function scriptify(jsonDict) {
     const s = new bsv.Script()
@@ -20,8 +21,8 @@ function push(s, k, v) {
 }
 
 function unscriptify(s) {
+    const stack = new Stack()
     let isreadingkey = true
-    let objectstack = {currentkey: null, stack: []}
     let issamelevel = false
     for (i = 0; i < s.chunks.length; i++)
     {
@@ -29,15 +30,14 @@ function unscriptify(s) {
         let next = s.chunks[i+1]
         if (isreadingkey) {
             if (isDrop(item)) {
-                objectstack.stack.pop()
+                stack.pop()
             } else {
-                objectstack.currentkey = item.buf.toString()
-                if (!issamelevel && !isDrop(item))
-                {
-                    newobj(objectstack)
+                stack.currentkey = item.buf.toString()
+                if (!issamelevel && !isDrop(item)) {
+                    stack.newLevel()
                 }
                 else {
-                    top(objectstack)[objectstack.currentkey] = null
+                    stack.set(null)
                 }
                 isreadingkey = !isDrop(next)
                 //TODO: assert next item is drop
@@ -46,42 +46,26 @@ function unscriptify(s) {
                 }
             }
         } else {
-            if (issamelevel || isDrop(next))
-            {
-                top(objectstack)[objectstack.currentkey] = item.buf.toString()
+            if (issamelevel || isDrop(next)) {
+                stack.set(item.buf.toString())
                 isreadingkey = isDrop(next)
                 issamelevel = isDrop(next)
             }
             else {
-                newobj(objectstack)
+                stack.newLevel()
             }
             i++
         }
-        //console.log(objectstack)
+        //console.log(stack.stack)
     }
-    //TODO:assert only one item on stack
-    //console.log(JSON.stringify(objectstack))
-    return objectstack.stack[0]
-}
-
-function top(objectstack) {
-    if (!objectstack.stack.length) return null
-    return objectstack.stack.slice(-1)[0] 
-}
-
-function newobj(objectstack) {
-    const t = top(objectstack)
-    const newone = {}
-    newone[objectstack.currentkey] = null
-    if (t) {
-        last = Object.keys(t)[Object.keys(t).length-1];
-        t[last] = newone
+    if (stack.stack.length > 1) {
+        throw "Stack should only have one item after unscriptify"
     }
-    objectstack.stack.push(newone)
+    return stack.top()
 }
 
 function isDrop(item) {
     return item.opcodenum === 117
 }
 
-module.exports = {scriptify, unscriptify};
+module.exports = {scriptify, unscriptify}

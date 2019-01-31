@@ -1,4 +1,4 @@
-const nestedpushdata = require('./nestedpushdata')
+const nestedpushdata = require('./src/nestedpushdata')
 
 const simpleJson = {a:"b"}
 console.log(simpleJson)
