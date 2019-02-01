@@ -1,22 +1,36 @@
 const bsv = require('bsv')
 const Stack = require('./stack')
 
-function scriptify(jsonDict) {
+function scriptify(collection) {
     const s = new bsv.Script()
-    Object.keys(jsonDict).forEach(key => { push(s, key, jsonDict[key]) })
+    if (Array.isArray(collection)) {
+        collection.forEach(val => { push(s, null, val) })
+    } else {
+        if (typeof collection === "object") {
+            Object.keys(collection).forEach(key => { push(s, key, collection[key]) })
+        }
+    }
     return s
 }
 
 function push(s, k, v) {
-    if( v !== null && typeof v == "object" ) {
-        s.add(new Buffer(k))
-        Object.entries(v).forEach(([key, value]) => {
-            push(s, key, value)
-        })
+    if( v !== null && Array.isArray(v) ) {
+        v.forEach(value => { push(s, k, value) })
         s.add("OP_DROP")
+    } else {
+        if( v !== null && typeof v === "object" ) {
+            s.add(new Buffer(k))
+            Object.entries(v).forEach(([key, value]) => {
+                push(s, key, value)
+            })
+            s.add("OP_DROP")
     }
     else {
-        s.add(new Buffer(k)).add("OP_DROP").add(new Buffer(v)).add("OP_DROP")  
+        if (k != null) {
+            s.add(new Buffer(k)).add("OP_DROP")
+        }
+        s.add(new Buffer(v)).add("OP_DROP")  
+    }
     }
 }
 

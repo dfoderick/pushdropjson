@@ -14,9 +14,8 @@ describe('pushdropjson', function() {
             stack.currentkey = "a"
             assert.equal(stack.currentkey, "a")
         })
-  
     })
-    describe('#stringify', function() {
+    describe('#stringify json', function() {
     it('simple flat json can be retrieved', function() {
       const simpleJson = {a:"b"}
       const simpleScript = nestedpushdata.scriptify(simpleJson)
@@ -31,4 +30,19 @@ describe('pushdropjson', function() {
         assert.equal(retrieved.a.b.e, "f")
       })
     })
+    describe('#stringify array', function() {
+        it('simple array can be retrieved', function() {
+          const simple = ["a","b"]
+          const simpleScript = nestedpushdata.scriptify(simple)
+          const retrievedSimple = nestedpushdata.unscriptify(simpleScript)
+          assert.equal(retrievedSimple["a"], "b")
+        })
+        // it('complex json can be retrieved', function() {
+        //     const json = {a:{b:{c:"d",e:"f"}}}
+        //     const script = nestedpushdata.scriptify(json)
+        //     const retrieved = nestedpushdata.unscriptify(script)
+        //     assert.equal(retrieved.a.b.c, "d")
+        //     assert.equal(retrieved.a.b.e, "f")
+        //   })
+        })
 })
