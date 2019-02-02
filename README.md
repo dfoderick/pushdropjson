@@ -8,6 +8,8 @@ Basically, restrictions to [NULLDATA](https://bitcoin.org/en/glossary/null-data-
 
 Therefore, this approach is currently useful for P2SH redeem script.
 
+Simple data types (strings and small integers) are supported.
+
 ## Example Script
 This is your json object.
 ```

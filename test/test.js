@@ -43,5 +43,14 @@ describe('pushdropjson', function() {
         console.log(simpleScript)
         assert.equal(simpleScript.isDataOut(), true)
       })
-    })
+      it('numbers supported', function() {
+        const j = {a: '9', 'b': 9}
+        const s = nestedpushdata.scriptify(j, new bsv.Opcode('OP_DROP'))
+        console.log(s)
+        const r = nestedpushdata.unscriptify(s, new bsv.Opcode('OP_DROP'))
+        assert.equal(r.a, '9')
+        //numbers are supported
+        assert.equal(r.b, 9)
+      })
+      })
 })

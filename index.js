@@ -1,6 +1,6 @@
 const nestedpushdata = require('./src/nestedpushdata')
 
-const simpleJson = {a:"b"}
+const simpleJson = {a: "b"}
 console.log(simpleJson)
 const simpleScript = nestedpushdata.scriptify(simpleJson)
 console.log(simpleScript)
@@ -10,7 +10,7 @@ console.log(retrievedSimple)
 const simpleOpReturn = nestedpushdata.putData(simpleScript)
 console.log(simpleOpReturn)
 
-const complexJson = {a:{b:{c:"d",e:"f"}}}
+const complexJson = {a:{b:{c: "d", e: 9}}}
 console.log(complexJson)
 const complexScript = nestedpushdata.scriptify(complexJson)
 console.log(complexScript)

@@ -1,33 +1,41 @@
 const bsv = require('bsv')
 const Stack = require('./stack')
 //possible delimiters. Still experimenting
-const Delimiter_drop = new bsv.Opcode('OP_DROP')
-const Delimiter_reserved = new bsv.Opcode('OP_RESERVED') 
-const Delimiter_0 = new bsv.Opcode('OP_0')
-const Delimiter = Delimiter_0
+// const Delimiter_drop = new bsv.Opcode('OP_DROP')
+// const Delimiter_reserved = new bsv.Opcode('OP_RESERVED') 
+// const Delimiter_0 = new bsv.Opcode('OP_0')
+// const Delimiter = Delimiter_drop
 
 //build script from json object
-function scriptify(jsonDict) {
+function scriptify(jsonDict, delimiter = new bsv.Opcode('OP_0')) {
     const s = new bsv.Script()
-    Object.keys(jsonDict).forEach(key => { push(s, key, jsonDict[key]) })
+    Object.keys(jsonDict).forEach(key => { push(s, key, jsonDict[key], delimiter) })
     return s
 }
 
-function push(s, k, v) {
+function push(s, k, v, delimiter) {
     if( v !== null && typeof v == "object" ) {
         s.add(new Buffer(k))
         Object.entries(v).forEach(([key, value]) => {
-            push(s, key, value)
+            push(s, key, value, delimiter)
         })
-        s.add(Delimiter)
+        s.add(delimiter)
     }
     else {
-        s.add(new Buffer(k)).add(Delimiter).add(new Buffer(v)).add(Delimiter)
+        //console.log(`${k}:${v} ${typeof v}`)
+        s.add(getPushValue(k)).add(delimiter).add(getPushValue(v)).add(delimiter)
     }
 }
 
+function getPushValue(val) {
+    if (typeof val === "number") {
+        return val
+    }
+    return new Buffer(val)
+}
+
 //pull json object out of script
-function unscriptify(s) {
+function unscriptify(s, delimiter = new bsv.Opcode('OP_0')) {
     const stack = new Stack()
     let isreadingkey = true
     let issamelevel = false
@@ -36,34 +44,34 @@ function unscriptify(s) {
         let item = s.chunks[i]
         let next = s.chunks[i+1]
         if (isreadingkey) {
-            if (isDelimiter(item)) {
+            if (isDelimiter(item, delimiter)) {
                 stack.pop()
             } else {
-                stack.currentkey = item.buf.toString()
-                if (!issamelevel && !isDelimiter(item)) {
+                stack.currentkey = getValue(item)
+                if (!issamelevel && !isDelimiter(item, delimiter)) {
                     stack.newLevel()
                 }
                 else {
                     stack.set(null)
                 }
-                isreadingkey = !isDelimiter(next)
+                isreadingkey = !isDelimiter(next, delimiter)
                 //TODO: assert next item is delimiter
                 if (!isreadingkey) {
                     i++
                 }
             }
         } else {
-            if (issamelevel || isDelimiter(next)) {
-                stack.set(item.buf.toString())
-                isreadingkey = isDelimiter(next)
-                issamelevel = isDelimiter(next)
+            if (issamelevel || isDelimiter(next, delimiter)) {
+                //console.log(item)
+                stack.set(getValue(item))
+                isreadingkey = isDelimiter(next, delimiter)
+                issamelevel = isDelimiter(next, delimiter)
             }
             else {
                 stack.newLevel()
             }
             i++
         }
-        //console.log(stack.stack)
     }
     if (stack.stack.length > 1) {
         throw "Stack should only have one item after unscriptify"
@@ -71,8 +79,15 @@ function unscriptify(s) {
     return stack.top()
 }
 
-function isDelimiter(item) {
-    return item.opcodenum === Delimiter.toNumber()
+function getValue(item) {
+    if (item.buf) {
+        return item.buf.toString()
+    }
+    return item.opcodenum
+}
+
+function isDelimiter(item, delimiter) {
+    return item.opcodenum === delimiter.toNumber()
 }
 
 //add op_return to script if it needs it
