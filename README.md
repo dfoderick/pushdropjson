@@ -2,11 +2,11 @@
 This libraray allows you to store nested/hierarchical graphs of objects into Bitcoin Script which you can then store in Bitcoin. Later you can retrieve the object graph with fidelity.
 
 ## !Important Note!
-There are many limitations to this approach right now, mostly because of core code requiring Standard scripts. Once non-standard script are allowed then is storing hierarchical data in script will have more merit.
+There are many limitations to this approach right now, mostly because of core code requiring Standard scripts. Once non-standard script are allowed then storing hierarchical data in script will have more merit.
 
 Basically, restrictions to [NULLDATA](https://bitcoin.org/en/glossary/null-data-transaction) mean that only pushdata can be put in OP_RETURN. Therefore, OP_DROP will not work as a delimiter.
 
-Therefore, this approach can currently only be used for P2SH redeem script.
+Therefore, this approach is currently useful for P2SH redeem script.
 
 ## Example Script
 This is your json object.
