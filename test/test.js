@@ -1,4 +1,5 @@
 const assert = require('assert')
+const bsv = require('bsv')
 const nestedpushdata = require('../src/nestedpushdata')
 const Stack = require('../src/stack')
 
@@ -29,6 +30,18 @@ describe('pushdropjson', function() {
         const retrieved = nestedpushdata.unscriptify(script)
         assert.equal(retrieved.a.b.c, "d")
         assert.equal(retrieved.a.b.e, "f")
+      })
+      it('isDataOut', function() {
+        const script = new bsv.Script()
+        script.add("OP_RETURN").add("OP_1").add("OP_0")
+        assert.equal(script.isDataOut(), true)
+      })
+      it('script is data out', function() {
+        // cant use op_drop delimiter
+        const simpleJson = {a:"b"}
+        const simpleScript = nestedpushdata.putData(nestedpushdata.scriptify(simpleJson))
+        console.log(simpleScript)
+        assert.equal(simpleScript.isDataOut(), true)
       })
     })
 })

@@ -26,15 +26,14 @@ class Stack {
 
     newLevel() {
         const t = this.top()
-        const newone = {}
-        newone[this.currentkey] = null
+        const newone = { [this.currentkey]: null }
         if (t) {
+            //link the current top with the new level we are about to push
             let last = Object.keys(t)[Object.keys(t).length-1]
             t[last] = newone
         }
         this.stack.push(newone)
     }
-
 }
 
 module.exports = Stack

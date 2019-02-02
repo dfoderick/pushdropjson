@@ -7,6 +7,9 @@ console.log(simpleScript)
 const retrievedSimple = nestedpushdata.unscriptify(simpleScript)
 console.log(retrievedSimple)
 
+const simpleOpReturn = nestedpushdata.putData(simpleScript)
+console.log(simpleOpReturn)
+
 const complexJson = {a:{b:{c:"d",e:"f"}}}
 console.log(complexJson)
 const complexScript = nestedpushdata.scriptify(complexJson)
