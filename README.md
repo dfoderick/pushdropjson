@@ -1,8 +1,11 @@
 # Store complex objects in Bitcoin Script
-This libraray allows you to store nested/hierarchical graphs of objects into Bitcoin Script which you can then store in Bitcoin. Later you can retrieve the object graph with fidelity.
+This libraray allows you to serialize nested/hierarchical graphs of objects into Bitcoin Script which you can then store in Bitcoin. Later you can retrieve the object graph with fidelity.
+
+# Why use OP_DROP?
+In the future, some of the data that would currently be put into OP_RETURN will instead be put into script embedded into a transaction output that is spendable. In that scenario, miners will execute the "data" in the output script and every push onto the stack should be popped.
 
 ## !Important Note!
-There are many limitations to this approach right now, mostly because of core code requiring Standard scripts. Once non-standard script are allowed then storing hierarchical data in script will have more merit.
+There are many limitations to this approach right now, mostly because of core code requiring Standard scripts (isStandard). Once non-standard script are allowed then storing hierarchical data in script will have more merit.
 
 Basically, restrictions to [NULLDATA](https://bitcoin.org/en/glossary/null-data-transaction) mean that only pushdata can be put in OP_RETURN. Therefore, OP_DROP will not work as a delimiter.
 
